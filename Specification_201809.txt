@@ -1,0 +1,92 @@
+Cross(fit) Box Manager
+
+Klub:
+Nazwa
+Adres
+NIP
+Numer konta
+Założyciel 
+Kadra
+Zasoby
+
+
+Zasoby:
+Sale/pomieszczenia
+Sprzęt
+
+
+Skarbinik-Administrator:
+pobiera opłaty
+wysyła na email monity o brak zapłaty
+raportuje do managera o stanie przychodów
+raportuje do managera o stanie kosztów:
+- sala
+- media
+- sprzęt 
+- koszty utrzymania kadry
+
+
+Manager klubu:
+zakłada klub
+może zarządzać kilkoma klubami
+ma uprawnienia Skarbnika
+może dodać Skarbnika
+może dodać Trenera do kadry
+przypisuje Trenera do Treningu
+
+
+Zawodnik - zalogowany:
+płaci abonament
+Dostaje i wysyła wiadomości do/od innych zawodników
+Dostaje i wysyła wiadomości do/od trenerów
+może zapisać się na trening
+może zapisać się na zawody
+-- ma swoje atrybuty
+dane personalne
+treningi w których wziął udział
+wyniki, które uzyskał (to jest ważne, z psychologiczniego punktu widzenia MVP)
+
+
+dodaje swoje dokonania z Endomondo
+
+
+Trener:
+dane personalne
+
+
+Kadra:
+-Manager
+-Skarbnik
+-Trenerzy 
+
+
+Plan pracy kluby:
+- obowiązuje od do
+
+
+Event Trening:
+- Ma jednego trenera, który prowadzi zajęcia
+- jacy zawodnicy biorą udział
+- plan treningu, plan ćwiczeń
+- czas od kiedy do kiedy
+- miejsce
+- potrzebny sprzęt (MVP)
+
+
+
+Plan żywieniowy zawodnika:
+Autor: Jeden Trener
+Zawodnik: Dla kogo?
+Skład posiłków / Plan posiłków
+
+
+Zawody:
+Trener prowadzący na zawody:
+
+
+Integracja z Endomondo:
+Fajnie jakby treningi z Endo były 
+
+Fajnie jakby można było logować się przez facebook:
+
+
