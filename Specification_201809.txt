@@ -6,13 +6,35 @@ Adres
 NIP
 Numer konta
 Założyciel 
-Kadra
-Zasoby
+Kadra - jeden do wiele - Kadra
+Zasoby - jeden do wiele - Zasoby
+Aktualny Harmonogram pracy - jeden do wiele - Trening
+Zawodnik - jeden do wiele - Zawodnik
+Skrzynia wiadomości - jeden do wiele - Wiadomości
 
+Wiadomości:
+- data wysłania
+- od kogo
+- do kogo
+- czy przeczytana?
+- treść
+
+
+Kadra:
+-isManager
+-isSkarbnik
+-isTrener
+
+Trening
+- dzień tygodnia
+- godzina
+- nazwa: weighlifting
 
 Zasoby:
-Sale/pomieszczenia
-Sprzęt
+- Sale/pomieszczenia
+- Sprzęt
+
+
 
 
 Skarbinik-Administrator:
@@ -52,12 +74,6 @@ dodaje swoje dokonania z Endomondo
 
 Trener:
 dane personalne
-
-
-Kadra:
--Manager
--Skarbnik
--Trenerzy 
 
 
 Plan pracy kluby:
