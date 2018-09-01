@@ -1,2 +1,5 @@
 # SportManager
-Django application for handling and managing sport club and sport comunity around this club.  
+Django project for handling and managing sport club and sport comunity around this club.  
+
+# CrossBoxManager
+Django application for SportManager project.
