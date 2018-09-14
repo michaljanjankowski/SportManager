@@ -1,0 +1,11 @@
+{% extends "sport_club_base.html" %}
+{% block content %}
+        <h2>Registred Sport Clubs:</h2>
+        <ul>
+            {% for club in clubs %}
+            <li><a href='/club_enter/{{club.id}}'>{{club.club_name}}</a>  <a href ='/club_modify/{{club.id}}'>MODIFY</a></li>
+            {% endfor %}
+        </ul>
+
+        <td><a href="{% url 'sport_club_add' %}" >Add Sport Club</a></td>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "sport_club_base.html" %}
+{% block content %}
+<a href= "/clubs/">Back to sport clubs list</a>
+<br>
+<br>
+   <ul>
+       <li> Club name: {{ club.club_name }} </li>
+       <li> Address: {{ club.address }} </li>
+       <li> Description: {{ club.description }} </li>
+       <li> Bank Account: {{club.bank_account }}</li>
+       <li><a href ='/people/{{club.id}}'>Show All People</a></li>
+       <li><a href ='/athlete_add/{{club.id}}'>Add Athlete</a></li>
+       <li><a href ='/worker_add/{{club.id}}'>Add Worker</a></li>
+       <li>Get My messages</li>
+  </ul>
+{% endblock %}

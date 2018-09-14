@@ -1,0 +1,37 @@
+<!doctype html>
+
+<html>
+    <style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: center;
+    align: center;
+}
+</style>
+
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    </head>
+    <body>
+        {% block title %}
+            <h1>Sport Club Comunity Manager.</h1>
+        {% endblock %}
+
+        {% block content %}
+        <p>
+            Lorem ipsum
+        </p>
+        {% endblock %}
+
+        {% block content2 %}
+
+        {% endblock %}
+
+        {{error_message}}
+    </body>
+</html>

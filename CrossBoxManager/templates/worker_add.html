@@ -1,0 +1,9 @@
+{% extends "enter_club.html" %}
+{% block content2 %}
+        <h4>Adding worker to Sport Club: {{club.club_name}} </h4>
+        <form action="{% url 'worker_add_by_club_id' club.id%}" method="post">
+            {% csrf_token %}
+            {{personaddform.as_ul}}
+            <input type="submit" value="Add Worker">
+        </form>
+{% endblock %}

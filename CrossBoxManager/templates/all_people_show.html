@@ -1,0 +1,36 @@
+{% extends "enter_club.html" %}
+
+{% block content2 %}
+
+
+<table style="width:50%">
+    <tr>
+        <th>username</th>
+        <th>first_name</th>
+        <th>last_name</th>
+        <th>email</th>
+        <th>is_manager</th>
+        <th>is_accountant</th>
+        <th>is_trener</th>
+        <th>is fee payed</th>
+        <th colspan=2> Person Toolbar</th>
+    </tr>
+{% for person in people %}
+    <tr>
+        <td>{{ person.1 }}</td>
+        <td>{{ person.2 }}</td>
+        <td>{{ person.3 }}</td>
+        <td>{{ person.4 }}</td>
+        <td>{{ person.5|yesno:"yes,no,maybe" }}</td>
+        <td>{{ person.6|yesno:"yes,no,maybe" }}</td>
+        <td>{{ person.7|yesno:"yes,no,maybe" }}</td>
+        <td>{{ person.8|yesno:"yes,no,maybe" }}</td>
+        <td> <a href="{% url 'person_in_club_modify_by_id' club.id person.0 %}">Modify </a></td>
+        <td> <a href="{% url 'send_message' club.id person.0 %}"> Send Message To </a></td>
+    </tr>
+{% endfor %}
+
+</table>
+
+
+{% endblock %}

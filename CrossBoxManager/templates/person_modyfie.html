@@ -1,0 +1,9 @@
+{% extends "enter_club.html" %}
+{% block content2 %}
+        <h4>Modyfie person in Sport Club: {{club.club_name}} </h4>
+        <form action="{% url 'person_in_club_modify_by_id' club.id person.id%}" method="post">
+            {% csrf_token %}
+            {{personmodyfieform.as_ul}}
+            <input type="submit" value="Modify Person">
+        </form>
+{% endblock %}

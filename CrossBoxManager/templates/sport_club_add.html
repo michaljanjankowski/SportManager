@@ -1,0 +1,12 @@
+{% extends "sport_club_base.html" %}
+{% block content %}
+<a href= "/clubs/">Back to sport clubs list</a>
+<br>
+<br>
+        <h2>Adding new Sport Club</h2>
+        <form action="{% url 'sport_club_add'%}" method="post">
+            {% csrf_token %}
+            {{sportclubaddform.as_ul}}
+            <input type="submit" value="Add Sport Club">
+        </form>
+{% endblock %}

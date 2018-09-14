@@ -1,0 +1,12 @@
+{% extends "sport_club_base.html" %}
+{% block content %}
+<a href= "/clubs/">Back to sport clubs list</a>
+<br>
+<br>
+        <h2>Modify Sport Club: {{ club.club_name }} </h2>
+        <form action="{% url 'sport_club_modify_by_id' club.id %}" method="post">
+            {% csrf_token %}
+            {{sportclubmodifyform.as_ul}}
+            <input type="submit" value="Modify Sport Club">
+        </form>
+{% endblock %}

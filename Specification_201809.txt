@@ -1,16 +1,31 @@
 Cross(fit) Box Manager
 
-Klub:
+UI
+
+1. Club  Zobacz kluby, Dodaj Klub, Modyfikuj Klub, on clik-> level 2
+
+2 Zobacz ludzi w klubie, on clik wyświetla wszystkich -> modyfikuj, wyślij wiadomość
+Dodaj ludzi w klubie, on cklik formularz dodania
+Zobacz treningi, on clik wyświetla treningi
+
+
+-------------------------------
+Tabele
+Box:
 Nazwa
 Adres
 NIP
 Numer konta
 Założyciel 
 Kadra - jeden do wiele - Kadra
-Zasoby - jeden do wiele - Zasoby
-Aktualny Harmonogram pracy - jeden do wiele - Trening
+Sale - jeden do wiele - Sale
+Sprzęty - jeden do wiele - Sprzęty
 Zawodnik - jeden do wiele - Zawodnik
+Aktualny Harmonogram pracy - jeden do wiele - Trening
+
 Skrzynia wiadomości - jeden do wiele - Wiadomości
+
+
 
 Wiadomości:
 - data wysłania
@@ -18,22 +33,46 @@ Wiadomości:
 - do kogo
 - czy przeczytana?
 - treść
+- box
 
-
-Kadra:
+Kadra/Personel pola:
 -isManager
 -isSkarbnik
 -isTrener
+-box
+
+Zawodnik pola:
+-imię
+-nazwisko
+-email
+-box
+
 
 Trening
 - dzień tygodnia
 - godzina
 - nazwa: weighlifting
+- czy aktywny? -
+- box
+
+
+Event Trening
+- data
+- prowadzący
+- uczestnicy
+- plan
+- sprzęt_dla_jednej_osoby
+- jeden do wiele do trening
 
 Zasoby:
-- Sale/pomieszczenia
-- Sprzęt
+Sale/pomieszczenia
+- nazwa sali
+- ilość miejsc
+- box
 
+Sprzęt
+- nazwa sprzętu
+- ilość sprzętu
 
 
 
