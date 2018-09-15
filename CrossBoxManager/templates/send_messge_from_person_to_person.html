@@ -1,0 +1,14 @@
+{% extends "enter_club.html" %}
+{% block content2 %}
+        <h4>Sending in Sport Club: {{club.club_name}} </h4>
+        <ul>
+            <li>From (logged one): {{sending_person.user.username}} </li>
+            <li>To (choosen one): {{receiving_person.user.username}}</li>
+            <li>Date posted: {{date}} </li>
+        </ul>
+        <form action="{% url 'send_message' club.id receiving_person.id%}" method="post">
+            {% csrf_token %}
+            {{messagesendform.as_ul}}
+            <input type="submit" value="Send Message">
+        </form>
+{% endblock %}

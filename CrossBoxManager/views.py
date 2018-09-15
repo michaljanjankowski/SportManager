@@ -6,9 +6,34 @@ from django.http import HttpResponse, request
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from .models import WeekDays,Hours,MessageTypes, SportClub, Workers, Athletes, People, Table, TreningsHarmo, TreningEvent
-from .forms import SportClubAddForm, AthleteAddForm, WorkersAddForm, AthleteModifyForm, WorkersModifyForm
+from .forms import LoginForm, SportClubAddForm, AthleteAddForm, WorkersAddForm, AthleteModifyForm, WorkersModifyForm, SendMessageForm
+import time
+import datetime
 
 # Create your views here.
+
+class LoginView(View):
+    def get(self, request):
+        loginform = LoginForm()
+        return render(request,"login_page.html",{'loginform':loginform})
+
+    def post(self, request):
+        loginform = LoginForm(request.POST)
+        if loginform.is_valid():
+            #Note: after is_valid() cleaned_data can be used
+            username = loginform.cleaned_data['user_name']
+            password = loginform.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('sport_clubs_show')
+            else:
+                error_message = "Wrong credentials"
+                return render(request, "loginform.html", {"loginform": loginform, "error_message": error_message})
+        else:
+            error_message = "Wrong credentials. Form not valid"
+            return render(request, "loginform.html", {"loginform": loginform, "error_message": error_message})
+
 
 class SportClubsShowView(View):
     def get(self, request):
@@ -264,25 +289,67 @@ class PersonModifyView(View):
             else:
                 return HttpResponse('Athethe modyfie form not valid')
 
-
         return redirect('people_show_by_club_id',sport_club_id=club.id)
 
 
-class MessagesinClubShowView(View):
-    "By ClubId"
-    pass
-
 class MessagesToPersonView(View):
-    "By ClubId"
-    pass
-
-class MessageSendView(View):
-    "By ClubId and PersonId"
+    "By ClubId and by person id"
     def get(self, request, sport_club_id, people_id):
         pass
 
     def post(self, request, sport_club_id, people_id):
         pass
+
+class MessagesinClubShowView(View):
+    "By ClubId"
+    pass
+
+
+# class Table(models.Model):
+#     from_who = models.ForeignKey(People,  null=True, on_delete=models.SET_NULL, related_name="from_who")
+#     to_who = models.ForeignKey(People, null=True, on_delete=models.SET_NULL, related_name="to_who")
+#     message = models.TextField()
+#     date_posted = models.DateTimeField()
+#     typeOfmessage = models.CharField(max_length=128, choices=MessageTypes)
+#     sport_club = models.ForeignKey(SportClub, null=True, on_delete=models.SET_NULL)
+
+
+class MessageSendView(View):
+    "By ClubId and PersonId"
+
+    def get(self, request, sport_club_id, people_id):
+        club = SportClub.objects.get(id=sport_club_id)
+        messagesendform = SendMessageForm()
+        receiving_person = People.objects.get(id=people_id)
+        user=User.objects.get(username=request.user.username)
+        sending_person = People.objects.get(user=user.id)
+        date = datetime.datetime.now()
+        return render(request, 'send_messge_from_person_to_person.html',
+                      {'club': club,
+                       'messagesendform': messagesendform,
+                       'receiving_person': receiving_person,
+                       'sending_person':sending_person,
+                       'date':date})
+
+    def post(self, request, sport_club_id, people_id):
+        club = SportClub.objects.get(id=sport_club_id)
+        messagesendform = SendMessageForm(request.POST)
+        if messagesendform.is_valid():
+            receiving_person = People.objects.get(id=people_id)
+            user = User.objects.get(username=request.user.username)
+            sending_person = People.objects.get(user=user.id)
+            date = datetime.datetime.now()
+            Table.objects.create(
+                from_who = sending_person,
+                to_who = receiving_person,
+                message = messagesendform.cleaned_data['message'],
+                typeOfmessage = messagesendform.cleaned_data['typeOfmessage'],
+                date_posted = date,
+                sport_club = club
+            )
+        else:
+            return HttpResponse('Message form not valid')
+        return redirect('people_show_by_club_id', sport_club_id=club.id)
 
 #Most problably will not be used in this milestone
 class TreningsHarmoShowView(View):

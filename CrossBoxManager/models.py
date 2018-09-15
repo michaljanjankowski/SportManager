@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 WeekDays = (
+    ('', 'Select training day'),
     ("Mon","Monday"),
     ("Tue", "Tuesday"),
     ("Wed", "Wednesday"),
@@ -15,6 +16,7 @@ WeekDays = (
 
 
 Hours = (
+    ('', 'Select training hour'),
     (8,8),
     (9,9),
     (16,16),
@@ -26,9 +28,10 @@ Hours = (
 )
 
 MessageTypes =(
+    ('', 'Select type of message'),
     ("InterStaff","InterStaff"),
-    ("InterAthlete","InterAthlete"),
-    ("StaffAthlete","StaffAthlete"),
+    ("InterToAthlete","InterToAthlete"),
+    ("StaffToAthlete","StaffToAthlete"),
 )
 
 

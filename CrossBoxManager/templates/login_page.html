@@ -1,0 +1,13 @@
+{% extends "sport_club_base.html" %}
+{% block content %}
+    <h2>Login page</h2>
+
+    <form action="{% url 'login_page' %}" method="post">
+        {% csrf_token %}
+        {{loginform.as_ul}}
+        <input type="submit" value="Login">
+    </form>
+
+    {{error_message}}
+
+{% endblock %}

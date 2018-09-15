@@ -2,6 +2,10 @@ from django import forms
 from .models import WeekDays,Hours,MessageTypes, SportClub, Workers, Athletes, People, Table, TreningsHarmo, TreningEvent
 from django.contrib.auth.models import User
 
+class LoginForm(forms.Form):
+    user_name = forms.CharField(label="User Name", max_length=128)
+    password = forms.CharField(label="Password", max_length=128, widget=forms.PasswordInput)
+
 class SportClubAddForm(forms.ModelForm):
     class Meta:
         model = SportClub
@@ -40,11 +44,11 @@ class WorkersModifyForm(forms.ModelForm):
 
 
 class SendMessageForm(forms.ModelForm):
+
     class Meta:
         model = Table
-        fields = ('from_who', 'to_who', 'message', 'date_posted', 'typeOfmessage', 'sport_club')
+        fields = ('message','typeOfmessage')
 
-
-class LoginForm(forms.Form):
-    user_name = forms.CharField(label="User Name", max_length=128)
-    password = forms.CharField(label="Password", max_length=128, widget=forms.PasswordInput)
+        widgets = {
+                    'typeOfmessage': forms.Select(choices=MessageTypes, attrs={'class': 'form-control'}),
+                  }
