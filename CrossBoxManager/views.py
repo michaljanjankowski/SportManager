@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, request
 from django.views import View
@@ -29,16 +29,22 @@ class LoginView(View):
                 return redirect('sport_clubs_show')
             else:
                 error_message = "Wrong credentials"
-                return render(request, "loginform.html", {"loginform": loginform, "error_message": error_message})
+                return render(request, "login_page.html", {"loginform": loginform, "error_message": error_message})
         else:
             error_message = "Wrong credentials. Form not valid"
-            return render(request, "loginform.html", {"loginform": loginform, "error_message": error_message})
+            return render(request, "login_page.html", {"loginform": loginform, "error_message": error_message})
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('login_page')
 
 
 class SportClubsShowView(View):
     def get(self, request):
         clubs = SportClub.objects.all()
-        return render(request,"all_sport_clubs.html",{'clubs':clubs})
+        return render(request,"all_sport_clubs.html",{'clubs':clubs,'logged_user':request.user.username})
 
 class SportClubAddView(View):
     def get(self, request):
@@ -56,7 +62,9 @@ class SportClubAddView(View):
 class SportClubEnterView(View):
     def get(self, request, sport_club_id):
         club = SportClub.objects.get(id=sport_club_id)
-        return render(request,'enter_club.html',{'club':club})
+        user = User.objects.get(username=request.user.username)
+        receiving_person = People.objects.get(user=user.id)
+        return render(request,'enter_club.html',{'club':club, 'receiving_person':receiving_person, 'logged_user':request.user.username})
 
     def post(self, request):
         pass
@@ -141,7 +149,7 @@ class PeopleShowView(View):
             people = None
             error_message = "There are no people in sport club {}".format(club.club_name)
         return render(request, 'all_people_show.html',
-                          {'people': peoplelist, 'club': club, 'error_message': error_message})
+                          {'people': peoplelist, 'club': club, 'error_message': error_message, 'logged_user':request.user.username})
 
 
 class AthleteAddView(View):
@@ -149,7 +157,7 @@ class AthleteAddView(View):
     def get(self, request, sport_club_id):
         club = SportClub.objects.get(id=sport_club_id)
         personaddform = AthleteAddForm()
-        return render(request, 'athlete_add.html', {'club':club,'personaddform':personaddform})
+        return render(request, 'athlete_add.html', {'club':club,'personaddform':personaddform,'logged_user':request.user.username})
 
     def post(self, request, sport_club_id):
         club = SportClub.objects.get(id=sport_club_id)
@@ -293,12 +301,19 @@ class PersonModifyView(View):
 
 
 class MessagesToPersonView(View):
-    "By ClubId and by person id"
-    def get(self, request, sport_club_id, people_id):
-        pass
+    """By ClubId and by person id"""
+    def get(self, request, sport_club_id):
+        """There was people.id of logged user uder people_id
+        However refactoring was done"""
+        user =User.objects.get(username=request.user.username)
+        person = People.objects.get(user=user.id)
+        club = SportClub.objects.get(id=sport_club_id)
+        messages = Table.objects.all().filter(to_who=person.id).filter(sport_club=sport_club_id)
+        return render(request, 'receive_messages_for_given_person.html',{'club':club,'messages':messages})
 
     def post(self, request, sport_club_id, people_id):
         pass
+
 
 class MessagesinClubShowView(View):
     "By ClubId"
@@ -315,7 +330,7 @@ class MessagesinClubShowView(View):
 
 
 class MessageSendView(View):
-    "By ClubId and PersonId"
+    """By ClubId and PersonId"""
 
     def get(self, request, sport_club_id, people_id):
         club = SportClub.objects.get(id=sport_club_id)
@@ -351,7 +366,7 @@ class MessageSendView(View):
             return HttpResponse('Message form not valid')
         return redirect('people_show_by_club_id', sport_club_id=club.id)
 
-#Most problably will not be used in this milestone
+"""Most problably will not be used in this milestone"""
 class TreningsHarmoShowView(View):
     pass
 

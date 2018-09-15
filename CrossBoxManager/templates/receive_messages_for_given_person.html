@@ -1,10 +1,20 @@
 {% extends "enter_club.html" %}
 {% block content2 %}
         <h4>Your messages in  Sport Club: {{club.club_name}} are following: </h4>
-        <table>
-            from
-            date posted
-            type of message
-            content
+        <table style="width:50%">
+           <tr>
+               <th>date posted</th>
+               <th>from</th>
+               <th>type of message</th>
+               <th>content</th>
+           </tr>
+            {% for message in messages %}
+            <tr>
+                <td> {{ message.date_posted }} </td>
+                <td> {{ message.from_who }}</td>
+                <td> {{ message.typeOfmessage }}</td>
+                <td> {{ message.message }}</td>
+            </tr>
+            {% endfor %}
         </table>
 {% endblock %}

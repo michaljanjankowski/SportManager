@@ -1,16 +1,19 @@
 {% extends "sport_club_base.html" %}
 {% block content %}
 <a href= "/clubs/">Back to sport clubs list</a>
-<br>
-<br>
+          <div align="center">
+            <a href= "/logout/">Logout</a>
+            <br>
+            You are logged as: <b> {{ logged_user }} </b>
+           </div>
    <ul>
-       <li> Club name: {{ club.club_name }} </li>
+       <li> Club name: <b>{{ club.club_name }}</b> </li>
        <li> Address: {{ club.address }} </li>
        <li> Description: {{ club.description }} </li>
        <li> Bank Account: {{club.bank_account }}</li>
        <li><a href ='/people/{{club.id}}'>Show All People</a></li>
        <li><a href ='/athlete_add/{{club.id}}'>Add Athlete</a></li>
        <li><a href ='/worker_add/{{club.id}}'>Add Worker</a></li>
-       <li>Get My messages</li>
+       <li><a href ='/msgshow_toperson/{{club.id}}'>Get My messages</a></li>
   </ul>
 {% endblock %}

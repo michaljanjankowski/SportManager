@@ -1,6 +1,12 @@
 {% extends "sport_club_base.html" %}
 {% block content %}
+           <div align="center">
+            <a href= "/logout/">Logout</a>
+            <br>
+            You are logged as: <b> {{ logged_user }} </b>
+           </div>
         <h2>Registred Sport Clubs:</h2>
+
         <ul>
             {% for club in clubs %}
             <li><a href='/club_enter/{{club.id}}'>{{club.club_name}}</a>  <a href ='/club_modify/{{club.id}}'>MODIFY</a></li>
