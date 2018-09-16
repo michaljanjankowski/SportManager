@@ -5,15 +5,40 @@
             <a href= "/logout/">Logout</a>
             <br>
             You are logged as: <b> {{ logged_user }} </b>
+            <br>Your parent club is: <b> {{ parent_club }} </b>
            </div>
-   <ul>
-       <li> Club name: <b>{{ club.club_name }}</b> </li>
-       <li> Address: {{ club.address }} </li>
-       <li> Description: {{ club.description }} </li>
-       <li> Bank Account: {{club.bank_account }}</li>
-       <li><a href ='/people/{{club.id}}'>Show All People</a></li>
-       <li><a href ='/athlete_add/{{club.id}}'>Add Athlete</a></li>
-       <li><a href ='/worker_add/{{club.id}}'>Add Worker</a></li>
-       <li><a href ='/msgshow_toperson/{{club.id}}'>Get My messages</a></li>
-  </ul>
+   <table>
+       <tr>
+           <th> Club name: </th>
+           <td><b>{{ club.club_name }}</b> </td>
+       </tr>
+
+       <tr>
+           <th> Address: </th>
+           <td> {{ club.address }} </td>
+       </tr>
+
+       <tr>
+           <th> Description: </th>
+           <td> {{ club.description }} </td>
+       </tr>
+
+       <tr>
+           <th> Bank Account: </th>
+           <td> {{club.bank_account }} </td>
+       </tr>
+
+       <tr>
+            <td colspan="2"><a href ='/people/{{club.id}}'>Show All People</a></td>
+       </tr>
+       <tr>
+            <td colspan="2"><a href ='/athlete_add/{{club.id}}'>Add Athlete</a></td>
+       </tr>
+            <td colspan="2"><a href ='/worker_add/{{club.id}}'>Add Worker</a></td>
+       <tr>
+            <td colspan="2"><a href ='/msgshow_toperson/{{club.id}}'>Get My messages</a></td>
+       </tr>
+
+  </table>
+  <br>
 {% endblock %}

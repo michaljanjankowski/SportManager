@@ -14,14 +14,16 @@ class SportClubAddForm(forms.ModelForm):
 class AthleteAddForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('username','first_name','last_name','email','password')
+        fields = ('username','first_name','last_name','email')
+    password = forms.CharField(label="Password", max_length=128, widget=forms.PasswordInput)
     isFeePayed = forms.BooleanField(label="Is Fee Payed ?",initial=False, required=False)
 
 
 class WorkersAddForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('username','first_name','last_name','email','password')
+        fields = ('username','first_name','last_name','email')
+    password = forms.CharField(label="Password", max_length=128, widget=forms.PasswordInput)
     is_manager = forms.BooleanField(label="Position Manager ?",initial=False, required=False)
     is_accountant = forms.BooleanField(label="Postion Accountant ?",initial=False, required=False)
     is_trener = forms.BooleanField(label="Position Coach ?",initial=False, required=False)
