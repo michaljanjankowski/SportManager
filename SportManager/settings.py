@@ -48,6 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'CrossBoxManager.middleware.LoginRequiredMiddleware',
+    # 'frontend.middleware.SqlPrintingMiddleware'
 ]
 
 ROOT_URLCONF = 'SportManager.urls'
@@ -120,7 +122,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
+LOGIN_URL = '/login'
+LOGIN_EXEMPT_URLS = ('/admin')
 
 try:
     from .localsettings import *
