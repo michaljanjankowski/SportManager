@@ -1,6 +1,8 @@
 Cross(fit) Box Manager
 
-UI
+UI - wprowadzić html boost
+Zastanowić się na django sygnałami
+Wprowadzić deployment z w Docker - Compose
 
 1. Club  Zobacz kluby, Dodaj Klub, Modyfikuj Klub, on clik-> level 2
 
@@ -138,9 +140,8 @@ Skład posiłków / Plan posiłków
 Zawody:
 Trener prowadzący na zawody:
 
+Integracja ze strawą
 
-Integracja z Endomondo:
-Fajnie jakby treningi z Endo były 
 
 Fajnie jakby można było logować się przez facebook:
 

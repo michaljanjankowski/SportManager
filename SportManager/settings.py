@@ -125,6 +125,8 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/login'
 LOGIN_EXEMPT_URLS = ('/admin')
 
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
 try:
     from .localsettings import *
 except ImportError as e:
