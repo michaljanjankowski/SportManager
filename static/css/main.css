@@ -1,0 +1,9 @@
+.container {
+    background: url("/static/img/bg_bar.png") 10% 0 no-repeat fixed;
+    margin: 10 10 10 10;
+    border: 3px solid black;
+}
+
+.nav a {
+    background: #dedede;
+}

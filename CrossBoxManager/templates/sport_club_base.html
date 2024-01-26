@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 
 <html>
@@ -17,13 +18,20 @@ form
    width: 380px;
 }
 
+
 </style>
 
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+
+          {% load bootstrap5 %}
+          {% bootstrap_css %}
+          {% bootstrap_javascript %}
+        <script src="{% static 'js/main.js' %}"></script> <!-- This is how to include a static file -->
+        <link rel="stylesheet" href="{% static 'css/main.css' %}" type="text/css" />
     </head>
-    <body>
+
+    <body class="container">
         {% block title %}
             <h1>Sport Club Comunity Manager.</h1>
         {% endblock %}

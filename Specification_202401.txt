@@ -3,6 +3,8 @@ Cross(fit) Box Manager
 UI - wprowadzić html boost
 Zastanowić się na django sygnałami
 Wprowadzić deployment z w Docker - Compose
+Wprowadzić REST framework
+
 
 1. Club  Zobacz kluby, Dodaj Klub, Modyfikuj Klub, on clik-> level 2
 
