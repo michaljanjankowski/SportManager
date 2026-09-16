@@ -1,0 +1,47 @@
+services:
+  backend:
+    build: .
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-compose-development-key-change-before-deployment}
+      DJANGO_DEBUG: "true"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-sportmanager}
+      POSTGRES_USER: ${POSTGRES_USER:-sportmanager}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sportmanager-dev}
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/login/', timeout=5)"
+      interval: 10s
+      timeout: 6s
+      start_period: 30s
+      retries: 5
+
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sportmanager}
+      POSTGRES_USER: ${POSTGRES_USER:-sportmanager}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sportmanager-dev}
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 10
+
+volumes:
+  postgres_data:

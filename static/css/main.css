@@ -1,9 +1,89 @@
-.container {
-    background: url("/static/img/bg_bar.png") 10% 0 no-repeat fixed;
-    margin: auto;
-    width: 50%;
-    /*margin: 10 10 10 10;*/
-    border: 3px solid black;
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 32px 16px;
+    background-color: #eef1f4;
+    background-image: url("../img/bg_bar-transparent.png");
+    background-position: 10% 0;
+    background-size: 2000px 2000px;
+    background-repeat: repeat-y;
+    background-attachment: fixed;
+    color: #212529;
+}
+
+.page-content {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 28px;
+    background: #fff;
+    border: 1px solid #d8dee5;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    overflow-wrap: anywhere;
+}
+
+.people-table-scroll,
+.messages-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.people-table,
+.messages-table {
+    width: 100%;
+    overflow-wrap: normal;
+}
+
+.people-table th,
+.people-table td,
+.messages-table th,
+.messages-table td {
+    padding: 10px 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.people-table thead,
+.messages-table thead {
+    background: #eef1f4;
+}
+
+.people-table tbody tr:nth-child(even),
+.messages-table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.messages-table td {
+    vertical-align: top;
+}
+
+.messages-table .message-content {
+    min-width: 220px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.page-content form {
+    width: 100%;
+    max-width: 480px;
+}
+
+.page-content form input:not([type="checkbox"]):not([type="radio"]),
+.page-content form select,
+.page-content form textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 576px) {
+    body {
+        padding: 12px;
+    }
+
+    .page-content {
+        padding: 16px;
+    }
 }
 
 .nav a {

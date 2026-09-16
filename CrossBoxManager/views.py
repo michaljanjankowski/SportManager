@@ -1,12 +1,13 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, request
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponse, HttpResponseForbidden, request
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from .models import WeekDays,Hours,MessageTypes, SportClub, Workers, Athletes, People, Table, TreningsHarmo, TreningEvent
 from .forms import LoginForm, SportClubAddForm, AthleteAddForm, WorkersAddForm, AthleteModifyForm, WorkersModifyForm, SendMessageForm
+from django.utils import timezone
 import time
 import datetime
 
@@ -61,10 +62,8 @@ class SportClubAddView(View):
 
 class SportClubEnterView(View):
     def get(self, request, sport_club_id):
-        club = SportClub.objects.get(id=sport_club_id)
-        user = User.objects.get(username=request.user.username)
-        receiving_person = People.objects.get(user=user.id)
-        return render(request,'enter_club.html',{'club':club, 'receiving_person':receiving_person, 'logged_user':request.user.username})
+        club = get_object_or_404(SportClub, id=sport_club_id)
+        return render(request,'enter_club.html',{'club':club, 'logged_user':request.user.username})
 
     def post(self, request):
         pass
@@ -300,16 +299,19 @@ class PersonModifyView(View):
         return redirect('people_show_by_club_id',sport_club_id=club.id)
 
 
-class MessagesToPersonView(View):
+class MessagesToPersonView(LoginRequiredMixin, View):
     """By ClubId and by person id"""
     def get(self, request, sport_club_id):
         """There was people.id of logged user uder people_id
         However refactoring was done"""
-        user =User.objects.get(username=request.user.username)
-        person = People.objects.get(user=user.id)
-        club = SportClub.objects.get(id=sport_club_id)
-        messages = Table.objects.all().filter(to_who=person.id).filter(sport_club=sport_club_id)
-        return render(request, 'receive_messages_for_given_person.html',{'club':club,'messages':messages})
+        club = get_object_or_404(SportClub, id=sport_club_id)
+        person = People.objects.filter(user=request.user, sport_club=club).first()
+        messages = Table.objects.none()
+        if person is not None:
+            messages = Table.objects.filter(to_who=person, sport_club=club)
+        return render(request, 'receive_messages_for_given_person.html', {
+            'club': club, 'messages': messages, 'has_club_profile': person is not None,
+        })
 
     def post(self, request, sport_club_id, people_id):
         pass
@@ -329,42 +331,50 @@ class MessagesinClubShowView(View):
 #     sport_club = models.ForeignKey(SportClub, null=True, on_delete=models.SET_NULL)
 
 
-class MessageSendView(View):
-    """By ClubId and PersonId"""
+class MessageSendView(LoginRequiredMixin, View):
+    """Send a message to a member of the selected club."""
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        self.club = get_object_or_404(SportClub, id=kwargs['sport_club_id'])
+        self.receiving_person = get_object_or_404(
+            People, id=kwargs['people_id'], sport_club=self.club,
+        )
+        self.sending_person = People.objects.filter(user=request.user).first()
+        if not request.user.is_superuser and (
+            self.sending_person is None
+            or self.sending_person.sport_club_id != self.club.id
+        ):
+            return HttpResponseForbidden('Your account is not assigned to this club')
+        return super().dispatch(request, *args, **kwargs)
+
+    def render_form(self, request, form):
+        return render(request, 'send_messge_from_person_to_person.html', {
+            'club': self.club,
+            'messagesendform': form,
+            'receiving_person': self.receiving_person,
+            'sending_user': request.user,
+            'date': timezone.now(),
+        })
 
     def get(self, request, sport_club_id, people_id):
-        club = SportClub.objects.get(id=sport_club_id)
-        messagesendform = SendMessageForm()
-        receiving_person = People.objects.get(id=people_id)
-        user=User.objects.get(username=request.user.username)
-        sending_person = People.objects.get(user=user.id)
-        date = datetime.datetime.now()
-        return render(request, 'send_messge_from_person_to_person.html',
-                      {'club': club,
-                       'messagesendform': messagesendform,
-                       'receiving_person': receiving_person,
-                       'sending_person':sending_person,
-                       'date':date})
+        return self.render_form(request, SendMessageForm())
 
     def post(self, request, sport_club_id, people_id):
-        club = SportClub.objects.get(id=sport_club_id)
-        messagesendform = SendMessageForm(request.POST)
-        if messagesendform.is_valid():
-            receiving_person = People.objects.get(id=people_id)
-            user = User.objects.get(username=request.user.username)
-            sending_person = People.objects.get(user=user.id)
-            date = datetime.datetime.now()
-            Table.objects.create(
-                from_who = sending_person,
-                to_who = receiving_person,
-                message = messagesendform.cleaned_data['message'],
-                typeOfmessage = messagesendform.cleaned_data['typeOfmessage'],
-                date_posted = date,
-                sport_club = club
-            )
-        else:
-            return HttpResponse('Message form not valid')
-        return redirect('people_show_by_club_id', sport_club_id=club.id)
+        form = SendMessageForm(request.POST)
+        if not form.is_valid():
+            return self.render_form(request, form)
+        sender, _ = People.objects.get_or_create(user=request.user)
+        Table.objects.create(
+            from_who=sender,
+            to_who=self.receiving_person,
+            message=form.cleaned_data['message'],
+            typeOfmessage=form.cleaned_data['typeOfmessage'],
+            date_posted=timezone.now(),
+            sport_club=self.club,
+        )
+        return redirect('people_show_by_club_id', sport_club_id=self.club.id)
 
 """Most problably will not be used in this milestone"""
 class TreningsHarmoShowView(View):

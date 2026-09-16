@@ -8,7 +8,10 @@ def	context_procesor(request):
         user_id = request.user.id
         try:
             person = People.objects.get(user=user_id)
-            parent_club = person.sport_club.club_name
+            parent_club = (
+                person.sport_club.club_name if person.sport_club_id
+                else "User not asigned to club"
+            )
         except People.DoesNotExist:
             parent_club = "User not asigned to club"
     else:

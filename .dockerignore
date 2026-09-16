@@ -1,0 +1,14 @@
+.git
+.agents
+.codex
+.venv
+**/__pycache__
+**/*.pyc
+.env
+.env.*
+!.env.example
+**/localsettings.py
+**/local_settings.py
+*.sqlite3
+*.log
+docs
