@@ -1,113 +1,113 @@
 # SportManager
-Django project for handling and managing sport club and sport comunity around this club.  
 
-# CrossBoxManager
-Django application for SportManager project.
+A Django project for managing sports clubs and their communities.
+CrossBoxManager is the Django application within the SportManager project.
 
-## Uruchomienie przez Docker Compose
+[Dokumentacja po polsku](README_PL.md)
 
-Konfiguracja służy do lokalnego developmentu. Frontend to szablony HTML
-serwowane przez backend Django; oba są dostępne na tym samym porcie.
-Wymagany jest uruchomiony Docker oraz Docker Compose v2 obsługujący `--wait`.
-Nie trzeba instalować Pythona, uv ani PostgreSQL na hoście.
-Wszystkie poniższe polecenia wykonuj w katalogu głównym repozytorium.
+## Running with Docker Compose
 
-Szybkie uruchomienie z przebudową obrazów i oczekiwaniem na gotowość usług:
+This configuration is intended for local development. The frontend consists
+of HTML templates served by the Django backend; both use the same port.
+You need Docker running and Docker Compose v2 with support for `--wait`.
+You do not need to install Python, uv, or PostgreSQL on the host.
+Run the commands below from the repository root.
+
+To build the images, start the services, and wait until they are ready:
 
 ```sh
 ./run.sh
 ```
 
-Skrypt korzysta z konfiguracji `.env`, jeśli istnieje, i można wywołać go
-również z innego katalogu, podając ścieżkę do `run.sh`.
-Przy pierwszym uruchomieniu utwórz następnie konto administratora zgodnie
-z instrukcją poniżej.
+The script uses `.env` if it exists. You can also run it from another directory
+by providing the path to `run.sh`. On your first run, create an administrator
+account as described below.
 
-### Pierwsze uruchomienie
+### First run
 
-1. Sprawdź dostępność Dockera:
+1. Check that Docker is available:
 
    ```sh
    docker compose version
    docker info
    ```
 
-2. Opcjonalnie przygotuj konfigurację lokalną:
+2. Optionally create a local configuration file:
 
    ```sh
    cp .env.example .env
    ```
 
-   Edytuj `.env` przed pierwszym startem, jeśli chcesz zmienić porty lub dane
-   logowania. Bez tego pliku Compose użyje wartości domyślnych.
+   Edit `.env` before starting for the first time if you want to change ports
+   or credentials. Without this file, Compose uses the default values.
 
-3. Zbuduj obrazy i uruchom usługi:
+3. Build the images and start the services:
 
    ```sh
    docker compose up --build -d --wait
    docker compose ps
    ```
 
-   Pierwszy start pobiera obrazy i instaluje zależności z `uv.lock`.
-   Backend czeka na gotowość bazy, wykonuje migracje i uruchamia Django.
-   `--wait` czeka na gotowość obu usług.
+   The first run downloads images and installs dependencies from `uv.lock`.
+   The backend waits for the database, applies migrations, and starts Django.
+   `--wait` waits until both services are ready.
 
-4. Utwórz konto administratora (jednorazowo dla nowej bazy):
+4. Create an administrator account (once for each new database):
 
    ```sh
    docker compose exec backend python manage.py createsuperuser
    ```
 
-5. Otwórz stronę logowania i zaloguj się utworzonym kontem.
-   Konto administratora umożliwia też dostęp do panelu `/admin/`.
+5. Open the login page and sign in with the account you created.
+   The administrator account also provides access to `/admin/`.
 
-### Adresy i połączenie z bazą
+### Addresses and database connection
 
-- Frontend i backend: <http://localhost:8000/login/>.
-- Panel administratora: <http://localhost:8000/admin/>.
-- PostgreSQL z hosta: `localhost:5433`, baza `sportmanager`, użytkownik
-  `sportmanager`, hasło `sportmanager-dev`.
-- Backend łączy się z bazą pod adresem `db:5432` w sieci Compose.
+- Frontend and backend: <http://localhost:8000/login/>.
+- Administration panel: <http://localhost:8000/admin/>.
+- PostgreSQL from the host: `localhost:5433`, database `sportmanager`,
+  username `sportmanager`, password `sportmanager-dev`.
+- The backend connects to PostgreSQL at `db:5432` within the Compose network.
 
-Porty są wystawione na `127.0.0.1`. Backend czeka na gotowość PostgreSQL
-i automatycznie wykonuje migracje przed startem. Dane bazy są przechowywane
-w wolumenie `postgres_data`; istniejąca baza SQLite nie jest importowana.
+Ports are bound to `127.0.0.1`. The backend waits for PostgreSQL and applies
+migrations automatically before starting. Database data is stored in the
+`postgres_data` volume; an existing SQLite database is not imported.
 
-Do połączenia z PostgreSQL w kliencie takim jak DBeaver lub pgAdmin użyj
-powyższych danych albo wartości ustawionych w `.env`.
+To connect using DBeaver, pgAdmin, or another PostgreSQL client, use the
+credentials above or the values configured in `.env`.
 
-| Zmienna w `.env` | Domyślnie | Znaczenie |
+| Variable in `.env` | Default | Purpose |
 | --- | --- | --- |
-| `BACKEND_PORT` | `8000` | Port aplikacji na hoście |
-| `POSTGRES_HOST_PORT` | `5433` | Port PostgreSQL na hoście |
-| `POSTGRES_DB` | `sportmanager` | Nazwa bazy |
-| `POSTGRES_USER` | `sportmanager` | Użytkownik bazy |
-| `POSTGRES_PASSWORD` | `sportmanager-dev` | Hasło bazy |
-| `DJANGO_SECRET_KEY` | Klucz deweloperski z `.env.example` | Klucz podpisywania danych Django |
+| `BACKEND_PORT` | `8000` | Application port on the host |
+| `POSTGRES_HOST_PORT` | `5433` | PostgreSQL port on the host |
+| `POSTGRES_DB` | `sportmanager` | Database name |
+| `POSTGRES_USER` | `sportmanager` | Database username |
+| `POSTGRES_PASSWORD` | `sportmanager-dev` | Database password |
+| `DJANGO_SECRET_KEY` | Development key from `.env.example` | Django signing key |
 
-Jeśli port jest zajęty, ustaw np. `BACKEND_PORT=8001` lub
-`POSTGRES_HOST_PORT=5434` i ponownie uruchom Compose. Strona będzie wtedy
-dostępna pod `http://localhost:8001/login/`, a baza pod `localhost:5434`.
-Porty wewnętrzne kontenerów pozostają odpowiednio 8000 i 5432.
-Zmiana danych logowania PostgreSQL po utworzeniu wolumenu wymaga również
-zmiany użytkownika/hasła w samej bazie.
+If a port is already in use, set, for example, `BACKEND_PORT=8001` or
+`POSTGRES_HOST_PORT=5434`, then start Compose again. The application will be
+available at `http://localhost:8001/login/` and the database at `localhost:5434`.
+The internal container ports remain 8000 and 5432 respectively.
+Changing PostgreSQL credentials after creating the volume also requires
+updating the username/password in the database itself.
 
-### Codzienna praca
+### Everyday use
 
-Uruchomienie istniejącego środowiska:
+Start an existing environment:
 
 ```sh
 docker compose up -d --wait
 ```
 
-Po zmianach w kodzie lub zależnościach przebuduj backend — kod jest kopiowany
-do obrazu, więc edycja plików na hoście wymaga ponownego zbudowania:
+After changing code or dependencies, rebuild the backend. Source code is
+copied into the image, so changes to host files require a rebuild:
 
 ```sh
 docker compose up --build -d --wait
 ```
 
-Podgląd stanu, logów i sprawdzenie konfiguracji Django:
+Inspect service status and logs, and check the Django configuration:
 
 ```sh
 docker compose ps
@@ -116,39 +116,40 @@ docker compose logs -f db
 docker compose exec backend python manage.py check
 ```
 
-Podgląd logów zakończ przez `Ctrl+C`; kontenery nadal działają.
-Konsola PostgreSQL w kontenerze:
+Press `Ctrl+C` to stop following logs; the containers keep running.
+To open a PostgreSQL console inside the container:
 
 ```sh
 docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
 ```
 
-Zatrzymanie środowiska:
+Stop the environment:
 
 ```sh
 docker compose down
 ```
 
-`docker compose down` zachowuje dane. `docker compose down -v` usuwa również
-wolumen bazy i wszystkie zapisane w nim dane.
-Konfiguracja używa serwera deweloperskiego Django i `DEBUG=true`;
-przed wdrożeniem potrzebna jest osobna konfiguracja produkcyjna.
+`docker compose down` preserves data. `docker compose down -v` also deletes
+the database volume and all data stored in it.
+This configuration uses Django's development server and `DEBUG=true`;
+a separate production configuration is required before deployment.
 
-### Problemy z uruchomieniem
+### Troubleshooting startup
 
-- Zajęty port: zmień `BACKEND_PORT` lub `POSTGRES_HOST_PORT` w `.env`.
-- Brak połączenia z Dockerem: uruchom daemon Docker i sprawdź uprawnienia
-  swojego użytkownika do korzystania z niego.
-- Usługa nie jest gotowa lub migracje nie przechodzą: sprawdź
-  `docker compose ps -a` oraz `docker compose logs backend db`.
-- Niepoprawne hasło bazy po zmianie `.env`: istniejący wolumen zachowuje
-  wcześniejsze dane logowania PostgreSQL.
+- Port already in use: change `BACKEND_PORT` or `POSTGRES_HOST_PORT` in `.env`.
+- Cannot connect to Docker: start the Docker daemon and check your user's
+  permissions to access it.
+- A service is not ready or migrations fail: check `docker compose ps -a`
+  and `docker compose logs backend db`.
+- Database password is incorrect after editing `.env`: an existing volume
+  retains the previous PostgreSQL credentials.
 
-## Uruchomienie przez uv
+## Running with uv
 
-Wymagany Python 3.10 lub nowszy oraz [uv](https://docs.astral.sh/uv/getting-started/installation/).
-Polecenia wykonuj w katalogu głównym repozytorium. Ten wariant domyślnie
-używa SQLite w pliku `db.sqlite3` i działa niezależnie od bazy Compose.
+You need Python 3.10 or newer and
+[uv](https://docs.astral.sh/uv/getting-started/installation/).
+Run these commands from the repository root. This option uses SQLite in
+`db.sqlite3` by default and runs independently of the Compose database.
 
 ```sh
 uv sync --locked
@@ -157,16 +158,16 @@ uv run manage.py createsuperuser
 uv run manage.py runserver
 ```
 
-Otwórz <http://127.0.0.1:8000/login/> lub <http://127.0.0.1:8000/admin/>.
-Serwer działa na pierwszym planie; zatrzymaj go przez `Ctrl+C`.
-Jeśli Compose już zajmuje port 8000, uruchom Django przez
-`uv run manage.py runserver 8001` i użyj portu 8001 w przeglądarce.
+Open <http://127.0.0.1:8000/login/> or <http://127.0.0.1:8000/admin/>.
+The server runs in the foreground; press `Ctrl+C` to stop it.
+If Compose already uses port 8000, run `uv run manage.py runserver 8001`
+and use port 8001 in your browser.
 
-Zależności bezpośrednie są w `pyproject.toml`, a dokładne wersje i hashe
-w `uv.lock`. Plik lock należy przechowywać w repozytorium.
-`uv sync --locked --no-dev` instaluje wyłącznie zależności aplikacji.
-Grupa `dev` zawiera Black i pip-audit. Aktualizacja: `uv lock --upgrade`,
-następnie `uv sync --locked` i ponowna weryfikacja:
+Direct dependencies are defined in `pyproject.toml`; exact versions and hashes
+are recorded in `uv.lock`. Keep the lock file in the repository.
+`uv sync --locked --no-dev` installs only application dependencies.
+The `dev` group includes Black and pip-audit. To update dependencies, run
+`uv lock --upgrade`, followed by `uv sync --locked`, then verify:
 
 ```sh
 uv run manage.py check
@@ -175,13 +176,14 @@ uv run manage.py test
 uv run pip-audit
 ```
 
-Projekt używa Django 5.2 LTS i `django-bootstrap5` zamiast niezgodnego
-z Django 5 pakietu `django-bootstrap-v5`. Zachowano Django REST Framework
-i sterownik PostgreSQL z poprzednich zależności na potrzeby konfiguracji lokalnych;
-domyślna baza to SQLite. Zależności pośrednie wybiera uv; usunięto niepotrzebny
-na Pythonie 3.10+ `backports.zoneinfo` oraz stare, nieużywane bezpośrednio piny.
+The project uses Django 5.2 LTS and `django-bootstrap5` instead of
+`django-bootstrap-v5`, which is incompatible with Django 5.
+Django REST Framework and the PostgreSQL driver from the previous dependencies
+have been retained for local configurations; SQLite is the default database.
+uv resolves transitive dependencies. The unnecessary `backports.zoneinfo`
+package for Python 3.10+ and old, unused direct pins have been removed.
 
-Przed wdrożeniem zapoznaj się z [raportem bezpieczeństwa](docs/security-audit.md).
-Konfigurację lokalną można nadpisać w ignorowanym przez Git
-`SportManager/localsettings.py`. Aktualizacja zależności nie usuwa opisanych
-w raporcie błędów autoryzacji aplikacji.
+Before deployment, read the [security report](docs/security-audit.md).
+You can override local settings in `SportManager/localsettings.py`, which
+is ignored by Git. Updating dependencies does not resolve the application
+authorization issues described in the report.
