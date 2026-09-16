@@ -1,0 +1,21 @@
+[project]
+name = "sportmanager"
+version = "0.1.0"
+description = "Django application for managing sports clubs"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "Django>=5.2.17,<5.3",
+    "django-bootstrap5>=26.2,<27",
+    "djangorestframework>=3.17.2,<4",
+    "psycopg2-binary>=2.9.9,<3",
+]
+
+[dependency-groups]
+dev = [
+    "black>=26.3.1,<27",
+    "pip-audit>=2.10.0,<3",
+]
+
+[tool.uv]
+package = false
