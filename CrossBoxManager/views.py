@@ -108,6 +108,7 @@ class PeopleShowView(View):
                 first_name = person.user.first_name
                 last_name = person.user.last_name
                 email = person.user.email
+                is_manager = is_accountant = is_trener = is_fee_payed = False
                 if person.worker != None and person.athlethe == None:
                     #print('Person is worker')
                     is_manager = person.worker.is_manager
@@ -231,6 +232,7 @@ class PersonModifyView(View):
     def get(self, request, sport_club_id, people_id ):
         club = SportClub.objects.get(id=sport_club_id)
         person = People.objects.get(id=people_id)
+        personmodyfieform = None
         if person.worker != None and person.athlethe == None:
             print('worker modyfication')
             workerform = WorkersModifyForm(initial={
@@ -253,6 +255,10 @@ class PersonModifyView(View):
                                          'isFeePayed':person.athlethe.isFeePayed
             })
             personmodyfieform = athletheform
+        if person.worker is None and person.athlethe is None:
+            return HttpResponseForbidden('This account has no worker or athlete role')
+        if person.worker is not None and person.athlethe is not None:
+            return HttpResponseForbidden('Editing accounts with both roles is not supported')
         return render(request, 'person_modyfie.html',
                       {'club':club,'personmodyfieform':personmodyfieform,'person':person})
 
