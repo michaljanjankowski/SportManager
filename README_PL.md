@@ -152,15 +152,15 @@ używa SQLite w pliku `db.sqlite3` i działa niezależnie od bazy Compose.
 
 ```sh
 uv sync --locked
-uv run manage.py migrate
-uv run manage.py createsuperuser
-uv run manage.py runserver
+DJANGO_DEBUG=true uv run manage.py migrate
+DJANGO_DEBUG=true uv run manage.py createsuperuser
+DJANGO_DEBUG=true uv run manage.py runserver
 ```
 
 Otwórz <http://127.0.0.1:8000/login/> lub <http://127.0.0.1:8000/admin/>.
 Serwer działa na pierwszym planie; zatrzymaj go przez `Ctrl+C`.
 Jeśli Compose już zajmuje port 8000, uruchom Django przez
-`uv run manage.py runserver 8001` i użyj portu 8001 w przeglądarce.
+`DJANGO_DEBUG=true uv run manage.py runserver 8001` i użyj portu 8001 w przeglądarce.
 
 Zależności bezpośrednie są w `pyproject.toml`, a dokładne wersje i hashe
 w `uv.lock`. Plik lock należy przechowywać w repozytorium.
@@ -169,9 +169,9 @@ Grupa `dev` zawiera Black i pip-audit. Aktualizacja: `uv lock --upgrade`,
 następnie `uv sync --locked` i ponowna weryfikacja:
 
 ```sh
-uv run manage.py check
-uv run manage.py makemigrations --check --dry-run
-uv run manage.py test
+DJANGO_DEBUG=true uv run manage.py check
+DJANGO_DEBUG=true uv run manage.py makemigrations --check --dry-run
+DJANGO_DEBUG=true uv run manage.py test
 uv run pip-audit
 ```
 
@@ -183,5 +183,11 @@ na Pythonie 3.10+ `backports.zoneinfo` oraz stare, nieużywane bezpośrednio pin
 
 Przed wdrożeniem zapoznaj się z [raportem bezpieczeństwa](docs/security-audit.md).
 Konfigurację lokalną można nadpisać w ignorowanym przez Git
-`SportManager/localsettings.py`. Aktualizacja zależności nie usuwa opisanych
-w raporcie błędów autoryzacji aplikacji.
+`SportManager/localsettings.py`. Historyczny raport opisuje stan przed wdrożeniem Etapu 0;
+aktualne zabezpieczenia i wymagane działania wdrożeniowe opisano poniżej.
+
+
+Etap 0: zasady dostępu, migracja ról i konfiguracja produkcyjna są opisane
+w [instrukcji zabezpieczeń](docs/stage0-security.md). Development poza Compose
+wymaga jawnego `DJANGO_DEBUG=true`; produkcja wymaga `DJANGO_SECRET_KEY`
+i `DJANGO_ALLOWED_HOSTS`.

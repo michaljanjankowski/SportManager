@@ -153,14 +153,14 @@ Run these commands from the repository root. This option uses SQLite in
 
 ```sh
 uv sync --locked
-uv run manage.py migrate
-uv run manage.py createsuperuser
-uv run manage.py runserver
+DJANGO_DEBUG=true uv run manage.py migrate
+DJANGO_DEBUG=true uv run manage.py createsuperuser
+DJANGO_DEBUG=true uv run manage.py runserver
 ```
 
 Open <http://127.0.0.1:8000/login/> or <http://127.0.0.1:8000/admin/>.
 The server runs in the foreground; press `Ctrl+C` to stop it.
-If Compose already uses port 8000, run `uv run manage.py runserver 8001`
+If Compose already uses port 8000, run `DJANGO_DEBUG=true uv run manage.py runserver 8001`
 and use port 8001 in your browser.
 
 Direct dependencies are defined in `pyproject.toml`; exact versions and hashes
@@ -170,9 +170,9 @@ The `dev` group includes Black and pip-audit. To update dependencies, run
 `uv lock --upgrade`, followed by `uv sync --locked`, then verify:
 
 ```sh
-uv run manage.py check
-uv run manage.py makemigrations --check --dry-run
-uv run manage.py test
+DJANGO_DEBUG=true uv run manage.py check
+DJANGO_DEBUG=true uv run manage.py makemigrations --check --dry-run
+DJANGO_DEBUG=true uv run manage.py test
 uv run pip-audit
 ```
 
@@ -185,5 +185,11 @@ package for Python 3.10+ and old, unused direct pins have been removed.
 
 Before deployment, read the [security report](docs/security-audit.md).
 You can override local settings in `SportManager/localsettings.py`, which
-is ignored by Git. Updating dependencies does not resolve the application
-authorization issues described in the report.
+is ignored by Git. The report describes the state before Stage 0; see the
+implementation and deployment notes below for the current access rules.
+
+
+Stage 0 access rules, role migration and production configuration are described
+in the [security implementation guide](docs/stage0-security.md) (Polish). Local
+development outside Compose requires explicit `DJANGO_DEBUG=true`; production
+requires `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS`.

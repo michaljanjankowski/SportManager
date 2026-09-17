@@ -5,9 +5,6 @@ from django.db import connection
 from django.utils.deprecation import MiddlewareMixin
 import os
 
-EXEMPT_URLS = [compile(settings.LOGIN_URL.lstrip('/'))]
-if hasattr(settings, 'LOGIN_EXEMPT_URLS'):
-    EXEMPT_URLS += [compile(expr) for expr in settings.LOGIN_EXEMPT_URLS]
 
 def terminal_width():
     """
@@ -18,14 +15,15 @@ def terminal_width():
     width = 0
     try:
         import struct, fcntl, termios
-        s = struct.pack('HHHH', 0, 0, 0, 0)
+
+        s = struct.pack("HHHH", 0, 0, 0, 0)
         x = fcntl.ioctl(1, termios.TIOCGWINSZ, s)
-        width = struct.unpack('HHHH', x)[1]
+        width = struct.unpack("HHHH", x)[1]
     except:
         pass
     if width <= 0:
         try:
-            width = int(os.environ['COLUMNS'])
+            width = int(os.environ["COLUMNS"])
         except:
             pass
     if width <= 0:
@@ -48,15 +46,22 @@ class LoginRequiredMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        assert hasattr(request, 'user'), "The Login Required middleware\
+        assert hasattr(request, "user"), "The Login Required middleware\
          requires authentication middleware to be installed. Edit your\
          MIDDLEWARE_CLASSES setting to insert\
          'django.contrib.auth.middlware.AuthenticationMiddleware'. If that doesn't\
          work, ensure your TEMPLATE_CONTEXT_PROCESSORS setting includes\
          'django.core.context_processors.auth'."
         if not request.user.is_authenticated:
-            path = request.path_info.lstrip('/')
-            if not any(m.match(path) for m in EXEMPT_URLS):
+            path = request.path_info.lstrip("/")
+            exempt = settings.LOGIN_EXEMPT_URLS
+            if isinstance(exempt, str):
+                raise ValueError(
+                    "LOGIN_EXEMPT_URLS must be a tuple of anchored patterns"
+                )
+            if request.path_info != settings.LOGIN_URL and not any(
+                compile(pattern).fullmatch(path) for pattern in exempt
+            ):
                 return HttpResponseRedirect(settings.LOGIN_URL)
         return self.get_response(request)
 
@@ -74,13 +79,13 @@ class SqlPrintingMiddleware(MiddlewareMixin):
             width = terminal_width()
             total_time = 0.0
             for query in connection.queries:
-                nice_sql = query['sql'].replace('"', '').replace(',',', ')
-                sql = "\033[1;31m[%s]\033[0m %s" % (query['time'], nice_sql)
-                total_time = total_time + float(query['time'])
-                while len(sql) > width-indentation:
-                    print ("%s%s" % (" "*indentation, sql[:width-indentation]))
-                    sql = sql[width-indentation:]
-                print ("%s%s\n" % (" "*indentation, sql))
-            replace_tuple = (" "*indentation, str(total_time))
-            print ("%s\033[1;32m[TOTAL TIME: %s seconds]\033[0m" % replace_tuple)
+                nice_sql = query["sql"].replace('"', "").replace(",", ", ")
+                sql = "\033[1;31m[%s]\033[0m %s" % (query["time"], nice_sql)
+                total_time = total_time + float(query["time"])
+                while len(sql) > width - indentation:
+                    print("%s%s" % (" " * indentation, sql[: width - indentation]))
+                    sql = sql[width - indentation :]
+                print("%s%s\n" % (" " * indentation, sql))
+            replace_tuple = (" " * indentation, str(total_time))
+            print("%s\033[1;32m[TOTAL TIME: %s seconds]\033[0m" % replace_tuple)
         return response

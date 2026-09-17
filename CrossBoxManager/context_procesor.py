@@ -1,21 +1,19 @@
-from django.contrib.auth.models import User
-from .models import People, SportClub
+from .models import ClubMembership
 
 
-def	context_procesor(request):
+def context_procesor(request):
+    parent_club = "User not asigned to club"
     if request.user.is_authenticated:
-        username = request.user.username
-        user_id = request.user.id
-        try:
-            person = People.objects.get(user=user_id)
-            parent_club = (
-                person.sport_club.club_name if person.sport_club_id
-                else "User not asigned to club"
+        membership = (
+            ClubMembership.objects.filter(
+                user=request.user,
+                status=ClubMembership.Status.ACTIVE,
             )
-        except People.DoesNotExist:
-            parent_club = "User not asigned to club"
-    else:
-        username = "User not logged"
-        parent_club = "User not asigned to club"
-
-    return {'logged_user':username, 'parent_club':parent_club}
+            .select_related("club")
+            .order_by("joined_at", "pk")
+            .first()
+        )
+        if membership:
+            parent_club = membership.club.club_name
+        return {"logged_user": request.user.username, "parent_club": parent_club}
+    return {"logged_user": "User not logged", "parent_club": parent_club}

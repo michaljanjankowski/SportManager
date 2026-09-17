@@ -8,6 +8,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DJANGO_DEBUG: "true"
     strategy:
       matrix:
         python-version: ["3.10", "3.12"]
@@ -31,3 +33,13 @@ jobs:
         run: uv run --no-sync python manage.py check
       - name: Run tests
         run: uv run --no-sync python manage.py test CrossBoxManager
+      - name: Check migrations
+        run: uv run --no-sync python manage.py makemigrations --check --dry-run
+      - name: Check production settings
+        env:
+          DJANGO_DEBUG: "false"
+          DJANGO_SECRET_KEY: ci-only-deployment-check-secret-key-at-least-fifty-characters
+          DJANGO_ALLOWED_HOSTS: example.invalid
+          DJANGO_HSTS_INCLUDE_SUBDOMAINS: "true"
+          DJANGO_HSTS_PRELOAD: "true"
+        run: uv run --no-sync python manage.py check --deploy --fail-level WARNING

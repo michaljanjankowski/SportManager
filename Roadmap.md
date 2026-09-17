@@ -60,22 +60,27 @@ jako aktualnego stanu. Ich obecność nie potwierdza zamknięcia całego audytu.
 
 ### Zadania
 
-- [ ] Zweryfikować aktualny stan każdego problemu z audytu i udokumentować naprawy.
-- [ ] Naprawić `LOGIN_EXEMPT_URLS` oraz dokładne dopasowanie ścieżek publicznych.
-- [ ] Zablokować anonimowe tworzenie kont poza świadomie zaprojektowanym procesem rejestracji.
-- [ ] Wprowadzić `ClubMembership`: `user`, `club`, `role`, `status`, `joined_at`.
-- [ ] Wprowadzić role `OWNER`, `MANAGER`, `COACH`, `MEMBER` zamiast flag booleanowych.
-- [ ] Zdefiniować macierz uprawnień do danych klubu, członków, grafiku i finansów.
-- [ ] Wymagać aktywnego członkostwa i właściwej roli dla każdej operacji GET i POST.
-- [ ] Filtrować odczyty i modyfikacje obiektów po klubie, także po identyfikatorach z URL i formularzy.
-- [ ] Ograniczyć zmianę ról, tworzenie personelu i klubów do uprawnionych użytkowników.
-- [ ] Przygotować migrację dotychczasowych profili i ról bez niezamierzonego podniesienia uprawnień.
-- [ ] Przenieść sekret do konfiguracji środowiska i wymienić klucz, jeżeli był używany na wdrożeniu.
-- [ ] Przygotować konfigurację produkcyjną: `DEBUG=False`, hosty, HTTPS, secure cookies i HSTS odpowiednie dla infrastruktury.
-- [ ] Włączyć walidację haseł i ograniczanie prób logowania.
-- [ ] Zmienić wylogowanie na POST z CSRF.
-- [ ] Dodać testy anonimowego dostępu, eskalacji ról i odczytu/zapisu między klubami.
-- [ ] Uruchamiać testy uprawnień w CI i zweryfikować konfigurację przez `check --deploy`.
+- [x] Zweryfikować aktualny stan każdego problemu z audytu i udokumentować naprawy.
+- [x] Naprawić `LOGIN_EXEMPT_URLS` oraz dokładne dopasowanie ścieżek publicznych.
+- [x] Zablokować anonimowe tworzenie kont poza świadomie zaprojektowanym procesem rejestracji.
+- [x] Wprowadzić `ClubMembership`: `user`, `club`, `role`, `status`, `joined_at`.
+- [x] Wprowadzić role `OWNER`, `MANAGER`, `COACH`, `MEMBER` zamiast flag booleanowych.
+- [x] Zdefiniować macierz uprawnień do danych klubu, członków, grafiku i finansów.
+- [x] Wymagać aktywnego członkostwa i właściwej roli dla każdej operacji GET i POST.
+- [x] Filtrować odczyty i modyfikacje obiektów po klubie, także po identyfikatorach z URL i formularzy.
+- [x] Ograniczyć zmianę ról, tworzenie personelu i klubów do uprawnionych użytkowników.
+- [x] Przygotować migrację dotychczasowych profili i ról bez niezamierzonego podniesienia uprawnień.
+- [ ] Zweryfikować stare konta managerów i aktywować zaufane członkostwa na wdrożeniu.
+- [x] Przenieść sekret do konfiguracji środowiska i usunąć stały klucz z ustawień.
+- [ ] Wymienić wcześniej używany klucz na rzeczywistym wdrożeniu i unieważnić stare sesje.
+- [x] Przygotować konfigurację produkcyjną: `DEBUG=False`, hosty, HTTPS, secure cookies i HSTS odpowiednie dla infrastruktury.
+- [x] Włączyć walidację haseł i ograniczanie prób logowania.
+- [x] Zmienić wylogowanie na POST z CSRF.
+- [x] Dodać testy anonimowego dostępu, eskalacji ról i odczytu/zapisu między klubami.
+- [x] Uruchamiać testy uprawnień w CI i zweryfikować konfigurację przez `check --deploy`.
+
+Implementacja i instrukcja wdrożenia: [Etap 0 — zabezpieczenia](docs/stage0-security.md).
+Kod i testy są wdrożone w repo; pilot wymaga jeszcze działań na docelowej infrastrukturze.
 
 ### Kryteria ukończenia
 

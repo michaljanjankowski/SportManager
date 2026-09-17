@@ -1,7 +1,7 @@
 {% extends "sport_club_base.html" %}
 {% block content %}
            <div align="center">
-            <a href= "/logout/">Logout</a>
+            <form method="post" action="{% url 'logout_page' %}">{% csrf_token %}<button type="submit">Logout</button></form>
             <br>
             You are logged as: <b> {{ logged_user }} </b>
             <br>Your parent club is: <b> {{ parent_club }} </b>
