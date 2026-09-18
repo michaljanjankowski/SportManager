@@ -54,7 +54,7 @@ Niezaznaczone zadania poniżej wymagają wykonania lub potwierdzenia.
 **Cel:** zamknąć krytyczne i wysokie problemy z
 [audytu bezpieczeństwa](docs/security-audit.md) oraz sprawdzić izolację klubów.
 Audyt opisuje stan z 2026-09-16. Obecnie
-[CrossBoxManager/tests.py](CrossBoxManager/tests.py) zawiera już testy widoków
+[CrossBoxManager/tests](CrossBoxManager/tests) zawiera już testy widoków
 klubu i wiadomości; nie należy traktować informacji z rozmowy o „0 testów”
 jako aktualnego stanu. Ich obecność nie potwierdza zamknięcia całego audytu.
 
@@ -66,6 +66,7 @@ jako aktualnego stanu. Ich obecność nie potwierdza zamknięcia całego audytu.
 - [x] Wprowadzić `ClubMembership`: `user`, `club`, `role`, `status`, `joined_at`.
 - [x] Wprowadzić role `OWNER`, `MANAGER`, `COACH`, `MEMBER` zamiast flag booleanowych.
 - [x] Zdefiniować macierz uprawnień do danych klubu, członków, grafiku i finansów.
+- [x] Ukrywać przyciski i linki operacji niedostępnych dla roli użytkownika, również przy edycji konkretnej osoby.
 - [x] Wymagać aktywnego członkostwa i właściwej roli dla każdej operacji GET i POST.
 - [x] Filtrować odczyty i modyfikacje obiektów po klubie, także po identyfikatorach z URL i formularzy.
 - [x] Ograniczyć zmianę ról, tworzenie personelu i klubów do uprawnionych użytkowników.

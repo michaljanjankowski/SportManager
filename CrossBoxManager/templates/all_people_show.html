@@ -29,7 +29,7 @@
         <td>{{ person.6|yesno:"yes,no,maybe" }}</td>
         <td>{{ person.7|yesno:"yes,no,maybe" }}</td>
         <td>{{ person.8|yesno:"yes,no,maybe" }}</td>
-        <td> <a href="{% url 'person_in_club_modify_by_id' club.id person.0 %}">Modify </a></td>
+        <td>{% if person.9 %}<a href="{% url 'person_in_club_modify_by_id' club.id person.0 %}">Modify</a>{% endif %}</td>
         <td> <a href="{% url 'send_message' club.id person.0 %}">Send message</a></td>
     </tr>
 {% endfor %}

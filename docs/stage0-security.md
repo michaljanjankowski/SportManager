@@ -27,6 +27,12 @@ Tożsamość konta należącego do kilku klubów oraz konta Django staff/superus
 może edytować wyłącznie administrator platformy. Właściciel klubowy nie może
 zdegradować istniejącego właściciela przez formularz edycji osoby.
 
+Interfejs ukrywa przyciski i linki do operacji, do których użytkownik nie ma
+uprawnień: dodawanie i edycję klubów, dodawanie osób, listę członków oraz
+edycję konkretnej osoby. Widoczność edycji osoby korzysta z tej samej funkcji
+co kontrola dostępu widoku, także dla kont staff i kont należących do kilku
+klubów. Bezpośrednie wejście przez URL nadal wymaga autoryzacji.
+
 Widoki sprawdzają role dla GET i POST, a wskazane osoby i odbiorcy wiadomości
 muszą należeć do wybranego klubu. Lista klubów jest ograniczona do aktywnych
 członkostw. Wiadomości prywatne są filtrowane po odbiorcy i klubie.
@@ -114,12 +120,17 @@ lokalnym; nie są konfiguracją serwera produkcyjnego.
 ```sh
 DJANGO_DEBUG=true uv run manage.py check
 DJANGO_DEBUG=true uv run manage.py makemigrations --check --dry-run
-DJANGO_DEBUG=true uv run manage.py test CrossBoxManager
+uv run pytest
 # Poniżej użyć rzeczywistej konfiguracji produkcyjnej:
 python manage.py check --deploy --fail-level WARNING
 ```
 
-CI wykonuje testy, kontrolę migracji i kontrolę ustawień produkcyjnych.
+Wszystkie testy znajdują się w `CrossBoxManager/tests/`. Pytest jest
+skonfigurowany w `pyproject.toml` i korzysta z osobnych ustawień
+`SportManager.test_settings` oraz testowej bazy SQLite w pamięci.
+Nie wymaga zmiennych środowiska używanych do wdrożenia.
+
+CI wykonuje testy przez pytest, kontrolę migracji i kontrolę ustawień produkcyjnych.
 Testy obejmują izolację klubów, role, nieaktywne członkostwa, próby eskalacji,
 CSRF, limity logowania, rollback tworzenia konta i migrację legacy ról.
 

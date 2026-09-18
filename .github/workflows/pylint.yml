@@ -23,7 +23,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install "uv==0.12.15"
-          uv sync --locked --no-dev --python "${{ matrix.python-version }}"
+          uv sync --locked --python "${{ matrix.python-version }}"
           uv pip install "pylint==3.3.9" "pylint-django==2.8.0"
       - name: Check code errors
         # Enforce correctness first; legacy style cleanup is a separate task.
@@ -32,7 +32,7 @@ jobs:
       - name: Check Django configuration
         run: uv run --no-sync python manage.py check
       - name: Run tests
-        run: uv run --no-sync python manage.py test CrossBoxManager
+        run: uv run --no-sync pytest
       - name: Check migrations
         run: uv run --no-sync python manage.py makemigrations --check --dry-run
       - name: Check production settings

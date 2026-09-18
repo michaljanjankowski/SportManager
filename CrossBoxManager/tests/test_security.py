@@ -6,7 +6,7 @@ from django.db import IntegrityError, transaction
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
-from .models import ClubMembership, LoginAttempt, People, SportClub, Workers, Table
+from ..models import ClubMembership, LoginAttempt, People, SportClub, Workers, Table
 
 
 class SecurityTests(TestCase):
@@ -366,3 +366,69 @@ class ProductionConfigurationTests(SimpleTestCase):
             DJANGO_ALLOWED_HOSTS="example.invalid",
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+
+class ActionVisibilityTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.club = SportClub.objects.create(club_name='Visibility')
+        cls.other = SportClub.objects.create(club_name='Other visibility')
+        cls.users = {}
+        cls.people = {}
+        for role in ClubMembership.Role.values:
+            user = User.objects.create_user(username='visible_' + role)
+            cls.users[role] = user
+            cls.people[role] = People.objects.create(user=user, sport_club=cls.club)
+            ClubMembership.objects.create(user=user, club=cls.club, role=role)
+        cls.admin = User.objects.create_superuser(username='visibility_admin')
+
+    def test_club_navigation_matches_role(self):
+        for role, user in self.users.items():
+            self.client.force_login(user)
+            response = self.client.get(reverse('sport_club_details_by_id', args=[self.club.pk]))
+            for name in ('athlete_add_by_club_id', 'worker_add_by_club_id'):
+                link = 'href="' + reverse(name, args=[self.club.pk]) + '"'
+                if role in ('OWNER', 'MANAGER'):
+                    self.assertContains(response, link)
+                else:
+                    self.assertNotContains(response, link)
+            link = 'href="' + reverse('people_show_by_club_id', args=[self.club.pk]) + '"'
+            if role == 'MEMBER':
+                self.assertNotContains(response, link)
+            else:
+                self.assertContains(response, link)
+            self.assertContains(response, reverse('msg_show_to_person', args=[self.club.pk]))
+
+    def test_club_list_hides_modify_and_creation_for_unauthorized_users(self):
+        for role, user in list(self.users.items()) + [('ADMIN', self.admin)]:
+            self.client.force_login(user)
+            response = self.client.get(reverse('sport_clubs_show'))
+            modify_link = 'href="' + reverse('sport_club_modify_by_id', args=[self.club.pk]) + '"'
+            if role in ('OWNER', 'MANAGER', 'ADMIN'):
+                self.assertContains(response, modify_link)
+            else:
+                self.assertNotContains(response, modify_link)
+            creation_link = 'href="' + reverse('sport_club_add') + '"'
+            if role == 'ADMIN':
+                self.assertContains(response, creation_link)
+            else:
+                self.assertNotContains(response, creation_link)
+
+    def test_person_modify_links_match_target_permissions(self):
+        coach = self.users['COACH']
+        ClubMembership.objects.create(user=coach, club=self.other)
+        self.users['MEMBER'].is_staff = True
+        self.users['MEMBER'].save()
+        for role, user in list(self.users.items()) + [('ADMIN', self.admin)]:
+            if role == 'MEMBER':
+                continue
+            self.client.force_login(user)
+            response = self.client.get(reverse('people_show_by_club_id', args=[self.club.pk]))
+            for target_role, person in self.people.items():
+                link = 'href="' + reverse('person_in_club_modify_by_id', args=[self.club.pk, person.pk]) + '"'
+                allowed = role == 'ADMIN' or (role == 'OWNER' and target_role in ('OWNER', 'MANAGER'))
+                if allowed:
+                    self.assertContains(response, link)
+                else:
+                    self.assertNotContains(response, link)
+                self.assertContains(response, 'href="' + reverse('send_message', args=[self.club.pk, person.pk]) + '"')

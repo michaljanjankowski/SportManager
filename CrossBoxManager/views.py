@@ -17,7 +17,7 @@ from .forms import (
     SendMessageForm,
 )
 from .models import SportClub, People, Workers, Athletes, Table, ClubMembership
-from .permissions import ClubAccessMixin, ClubManagementMixin, SuperuserMixin
+from .permissions import ClubAccessMixin, ClubManagementMixin, SuperuserMixin, can_edit_person
 
 
 class LoginView(View):
@@ -117,7 +117,7 @@ class PeopleShowView(ClubAccessMixin, View):
         people = People.objects.filter(
             user__club_memberships__club=self.club,
             user__club_memberships__status=ClubMembership.Status.ACTIVE,
-        ).select_related("user", "athlethe")
+        ).select_related("user", "athlethe").prefetch_related("user__club_memberships")
         if people_id is not None:
             people = people.filter(pk=people_id)
             get_object_or_404(people)
@@ -133,6 +133,7 @@ class PeopleShowView(ClubAccessMixin, View):
                 False,
                 roles[p.user_id] == "COACH",
                 p.athlethe.isFeePayed if p.athlethe_id else False,
+                can_edit_person(request.user, self.membership, p, roles[p.user_id]),
             )
             for p in people
         ]
@@ -208,18 +209,8 @@ class PersonModifyView(ClubManagementMixin, View):
             People, pk=people_id, user__club_memberships__club=self.club
         )
         membership = get_object_or_404(ClubMembership, user=person.user, club=self.club)
-        if not request.user.is_superuser:
-            if person.user.is_superuser or person.user.is_staff:
-                raise PermissionDenied
-            if (
-                self.membership.role != ClubMembership.Role.OWNER
-                and membership.role in ("OWNER", "MANAGER")
-            ):
-                raise PermissionDenied
-            # Shared User fields belong to every club of that user. Only the
-            # platform admin may edit identity data for multi-club accounts.
-            if person.user.club_memberships.exclude(club=self.club).exists():
-                raise PermissionDenied
+        if not can_edit_person(request.user, self.membership, person, membership.role):
+            raise PermissionDenied
         return person, membership
 
     def form(self, request, person, membership, data=None):

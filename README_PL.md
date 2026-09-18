@@ -171,7 +171,7 @@ następnie `uv sync --locked` i ponowna weryfikacja:
 ```sh
 DJANGO_DEBUG=true uv run manage.py check
 DJANGO_DEBUG=true uv run manage.py makemigrations --check --dry-run
-DJANGO_DEBUG=true uv run manage.py test
+uv run pytest
 uv run pip-audit
 ```
 
@@ -191,3 +191,22 @@ Etap 0: zasady dostępu, migracja ról i konfiguracja produkcyjna są opisane
 w [instrukcji zabezpieczeń](docs/stage0-security.md). Development poza Compose
 wymaga jawnego `DJANGO_DEBUG=true`; produkcja wymaga `DJANGO_SECRET_KEY`
 i `DJANGO_ALLOWED_HOSTS`.
+
+
+## Testy przez pytest
+
+Wszystkie testy znajdują się w `CrossBoxManager/tests/`:
+`test_views.py`, `test_security.py` i `test_negative.py`.
+
+```sh
+uv sync --locked
+uv run pytest
+uv run pytest CrossBoxManager/tests/test_negative.py -q
+uv run pytest -k csrf
+```
+
+Konfiguracja w `pyproject.toml` wybiera `SportManager.test_settings`.
+Pytest korzysta z oddzielnej testowej bazy SQLite w pamięci; nie wymaga
+ustawiania `DJANGO_DEBUG`, sekretu ani uruchamiania PostgreSQL.
+Dotychczasowa komenda `DJANGO_DEBUG=true uv run manage.py test CrossBoxManager`
+również działa. W CI testy uruchamiane są przez pytest.

@@ -1,4 +1,5 @@
 {% extends "sport_club_base.html" %}
+{% load club_permissions %}
 {% block content %}
            <div align="center">
             <form method="post" action="{% url 'logout_page' %}">{% csrf_token %}<button type="submit">Logout</button></form>
@@ -10,9 +11,14 @@
 
         <ul>
             {% for club in clubs %}
-            <li><a href='/club_enter/{{club.id}}'>{{club.club_name}}</a>  <a href ='/club_modify/{{club.id}}'>MODIFY</a></li>
+            {% club_action_allowed club 'manage' as can_manage %}
+            <li><a href="{% url 'sport_club_details_by_id' club.id %}">{{club.club_name}}</a>
+                {% if can_manage %}<a href="{% url 'sport_club_modify_by_id' club.id %}">MODIFY</a>{% endif %}
+            </li>
             {% endfor %}
         </ul>
 
-        <td><a href="{% url 'sport_club_add' %}" >Add Sport Club</a></td>
+        {% if request.user.is_superuser %}
+        <a href="{% url 'sport_club_add' %}">Add Sport Club</a>
+        {% endif %}
 {% endblock %}

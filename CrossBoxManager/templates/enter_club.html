@@ -1,5 +1,9 @@
 {% extends "sport_club_base.html" %}
+{% load club_permissions %}
 {% block content %}
+{% club_action_allowed club 'manage' as can_manage %}
+{% club_action_allowed club 'people' as can_view_people %}
+{% club_action_allowed club 'messages' as can_message %}
 <a href= "/clubs/">Back to sport clubs list</a>
           <div align="center">
             <form method="post" action="{% url 'logout_page' %}">{% csrf_token %}<button type="submit">Logout</button></form>
@@ -28,16 +32,16 @@
            <td> {{club.bank_account }} </td>
        </tr>
 
-       <tr>
-            <td colspan="2"><a href ='/people/{{club.id}}'>Show All People</a></td>
-       </tr>
-       <tr>
-            <td colspan="2"><a href ='/athlete_add/{{club.id}}'>Add Athlete</a></td>
-       </tr>
-            <td colspan="2"><a href ='/worker_add/{{club.id}}'>Add Worker</a></td>
-       <tr>
-            <td colspan="2"><a href ='/msgshow_toperson/{{club.id}}'>Get My messages</a></td>
-       </tr>
+       {% if can_view_people %}
+       <tr><td colspan="2"><a href="{% url 'people_show_by_club_id' club.id %}">Show All People</a></td></tr>
+       {% endif %}
+       {% if can_manage %}
+       <tr><td colspan="2"><a href="{% url 'athlete_add_by_club_id' club.id %}">Add Athlete</a></td></tr>
+       <tr><td colspan="2"><a href="{% url 'worker_add_by_club_id' club.id %}">Add Worker</a></td></tr>
+       {% endif %}
+       {% if can_message %}
+       <tr><td colspan="2"><a href="{% url 'msg_show_to_person' club.id %}">Get My messages</a></td></tr>
+       {% endif %}
 
   </table>
   <br>

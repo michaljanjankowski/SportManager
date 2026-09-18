@@ -34,3 +34,19 @@ class SuperuserMixin(LoginRequiredMixin):
         if not request.user.is_superuser:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+
+def can_edit_person(user, membership, person, target_role):
+    if not user.is_authenticated:
+        return False
+    if user.is_superuser:
+        return True
+    if membership is None or membership.status != ClubMembership.Status.ACTIVE:
+        return False
+    if membership.role not in (ClubMembership.Role.OWNER, ClubMembership.Role.MANAGER):
+        return False
+    if person.user.is_superuser or person.user.is_staff:
+        return False
+    if membership.role != ClubMembership.Role.OWNER and target_role in ('OWNER', 'MANAGER'):
+        return False
+    return not any(m.club_id != membership.club_id for m in person.user.club_memberships.all())

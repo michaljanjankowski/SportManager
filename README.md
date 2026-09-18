@@ -172,7 +172,7 @@ The `dev` group includes Black and pip-audit. To update dependencies, run
 ```sh
 DJANGO_DEBUG=true uv run manage.py check
 DJANGO_DEBUG=true uv run manage.py makemigrations --check --dry-run
-DJANGO_DEBUG=true uv run manage.py test
+uv run pytest
 uv run pip-audit
 ```
 
@@ -193,3 +193,21 @@ Stage 0 access rules, role migration and production configuration are described
 in the [security implementation guide](docs/stage0-security.md) (Polish). Local
 development outside Compose requires explicit `DJANGO_DEBUG=true`; production
 requires `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS`.
+
+
+## Running tests with pytest
+
+All tests are in `CrossBoxManager/tests/`:
+`test_views.py`, `test_security.py`, and `test_negative.py`.
+
+```sh
+uv sync --locked
+uv run pytest
+uv run pytest CrossBoxManager/tests/test_negative.py -q
+uv run pytest -k csrf
+```
+
+`pyproject.toml` selects `SportManager.test_settings`. Pytest uses an isolated
+in-memory SQLite database and needs no local secrets or PostgreSQL server.
+The Django command `DJANGO_DEBUG=true uv run manage.py test CrossBoxManager`
+also remains available. CI runs the tests through pytest.
